@@ -74,7 +74,9 @@ public class FacebookProfileProvider implements ProfileProvider, Serializable {
                         // graphUser now exists.
                         provider.setFullName(graphUser.getName());
                         provider.setFirstName(graphUser.getFirstName());
-                        provider.setEmail(graphUser.getProperty("email").toString());
+                        if (graphUser.getProperty("email") != null) {
+                            provider.setEmail(graphUser.getProperty("email").toString());
+                        }
 
                         t[0]++;
                         if (t[0] == 2) {

@@ -4,23 +4,23 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import net.devslash.easyauth.AuthenticatedCallback;
+import net.devslash.easyauth.AuthenticationCallbacks;
 
 
 /**
  * Created by Paul on 12/02/2015.
- *
+ * <p/>
  * LoginButton loginButton = (LoginButton) view.findViewById(R.id.authButton);
  * loginButton.setReadPermissions(Arrays.asList("email"));
  * SignInButton gSignIn = (SignInButton) view.findViewById(R.id.sign_in_button);
  * gSignIn.setOnClickListener((View.OnClickListener) getActivity());
  */
-public class LoginReceiver {
+public class AuthenticationProvider {
 
     FacebookReceiver fReceiver;
     GoogleReceiver gReceiver;
 
-    public LoginReceiver(Activity activity, AuthenticatedCallback callback) {
+    public AuthenticationProvider(Activity activity, AuthenticationCallbacks callback) {
         fReceiver = new FacebookReceiver(activity, callback);
         gReceiver = new GoogleReceiver(activity, callback);
     }
@@ -46,14 +46,11 @@ public class LoginReceiver {
 
     public void onResume() {
         fReceiver.onResume();
+        gReceiver.onResume();
     }
 
     public void onSaveInstanceState(Bundle outState) {
         fReceiver.onSaveInstanceState(outState);
-    }
-
-    public void onStart() {
-        gReceiver.onStart();
     }
 
     public void onStop() {
@@ -63,13 +60,12 @@ public class LoginReceiver {
     public void doLogin(AvailableLogin loginType) {
         if (loginType == AvailableLogin.FACEBOOK) {
 
-        }
-        else if (loginType == AvailableLogin.GOOGLE) {
+        } else if (loginType == AvailableLogin.GOOGLE) {
             gReceiver.doConnect();
         }
     }
 
-    public static enum AvailableLogin{
+    public static enum AvailableLogin {
         FACEBOOK,
         GOOGLE
     }

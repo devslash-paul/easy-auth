@@ -11,7 +11,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 
-import net.devslash.easyauth.AuthenticatedCallback;
+import net.devslash.easyauth.AuthenticationCallbacks;
+import net.devslash.easyauth.providers.GoogleProfileProvider;
+import net.devslash.easyauth.providers.ProfileCallback;
+import net.devslash.easyauth.providers.ProfileProvider;
 
 /**
  * Created by Paul on 12/02/2015.
@@ -20,8 +23,8 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private final String TAG = "GoogleReceiver";
-    private final AuthenticatedCallback mCallback;
     private final Activity mActivity;
+    private final AuthenticationCallbacks mCallback;
 
     private ConnectionResult gConnectionResult;
     private GoogleApiClient googleApiClient;
@@ -31,7 +34,7 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
 
     private ProgressDialog googleProgressDialog;
 
-    public GoogleReceiver(Activity activity, AuthenticatedCallback callback) {
+    public GoogleReceiver(Activity activity, AuthenticationCallbacks callback) {
         mCallback = callback;
         mActivity = activity;
     }
@@ -47,7 +50,19 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
             googleProgressDialog.dismiss();
         }
 
-        mCallback.onLogin();
+        GoogleProfileProvider.GenerateGoogleProfile(bundle, googleApiClient, new ProfileCallback() {
+            @Override
+            public void onReady(ProfileProvider instance) {
+                mCallback.onLogin(instance);
+
+            }
+
+            @Override
+            public void fail(String s) {
+
+            }
+        });
+
     }
 
     /**
@@ -111,7 +126,7 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
-    public void onStart() {
+    public void onResume() {
         googleApiClient.connect();
     }
 
