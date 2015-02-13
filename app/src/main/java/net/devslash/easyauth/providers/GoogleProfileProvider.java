@@ -21,7 +21,7 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
     private String firstName;
 
 
-    public static void GenerateGoogleProfile(Bundle bundle, GoogleApiClient app, ProfileCallback profileCallback) {
+    public static void GenerateGoogleProfile(GoogleApiClient app, ProfileCallback profileCallback) {
 
         GoogleProfileProvider provider = new GoogleProfileProvider();
 

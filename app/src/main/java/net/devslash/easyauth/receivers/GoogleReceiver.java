@@ -50,7 +50,7 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
             googleProgressDialog.dismiss();
         }
 
-        GoogleProfileProvider.GenerateGoogleProfile(bundle, googleApiClient, new ProfileCallback() {
+        GoogleProfileProvider.GenerateGoogleProfile(googleApiClient, new ProfileCallback() {
             @Override
             public void onReady(ProfileProvider instance) {
                 mCallback.onLogin(instance);
