@@ -16,6 +16,9 @@ import net.devslash.easyauth.providers.GoogleProfileProvider;
 import net.devslash.easyauth.providers.ProfileCallback;
 import net.devslash.easyauth.providers.ProfileProvider;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by Paul on 12/02/2015.
  */
@@ -24,8 +27,8 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
 
     private final String TAG = "GoogleReceiver";
     private final Activity mActivity;
-    private final AuthenticationCallbacks mCallback;
-
+    private final Set<AuthenticationCallbacks> mCallback = new HashSet<>();
+    
     private ConnectionResult gConnectionResult;
     private GoogleApiClient googleApiClient;
 
@@ -33,9 +36,9 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
     private boolean gSignInClicked = false;
 
     private ProgressDialog googleProgressDialog;
+    private Set<AuthenticationCallbacks> mAuthCallbacks = new HashSet<>();
 
-    public GoogleReceiver(Activity activity, AuthenticationCallbacks callback) {
-        mCallback = callback;
+    public GoogleReceiver(Activity activity) {
         mActivity = activity;
     }
 
@@ -53,8 +56,7 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
         GoogleProfileProvider.GenerateGoogleProfile(googleApiClient, new ProfileCallback() {
             @Override
             public void onReady(ProfileProvider instance) {
-                mCallback.onLogin(instance);
-
+                onLogin(instance);
             }
 
             @Override
@@ -65,6 +67,18 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
 
     }
 
+    private void onLogin(ProfileProvider instance) {
+        for (AuthenticationCallbacks callbacks : mAuthCallbacks) {
+            callbacks.onLogin(instance);
+        }
+    }
+
+    private void onLogout() {
+        for (AuthenticationCallbacks callbacks : mAuthCallbacks) {
+            callbacks.onLogout();
+        }
+    }
+
     /**
      * Find out what this does
      *
@@ -72,7 +86,7 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
      */
     @Override
     public void onConnectionSuspended(int i) {
-
+        onLogout();
     }
 
     @Override
@@ -139,5 +153,9 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
         googleProgressDialog.show();
 
         resolveSignInError(gConnectionResult);
+    }
+
+    public void registerAuthenticationCallback(AuthenticationCallbacks authenticationCallbacks) {
+        mAuthCallbacks.add(authenticationCallbacks);
     }
 }

@@ -15,6 +15,11 @@ import net.devslash.easyauth.providers.FacebookProfileProvider;
 import net.devslash.easyauth.providers.ProfileCallback;
 import net.devslash.easyauth.providers.ProfileProvider;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Created by Paul on 12/02/2015.
  */
@@ -22,7 +27,8 @@ public class FacebookReceiver {
 
     private final String TAG = "FacebookReceiver";
     private final Activity mActivity;
-    private final AuthenticationCallbacks mAuthCallbacks;
+    private final Set<AuthenticationCallbacks> mAuthCallbacks = new HashSet<>();
+    
     private UiLifecycleHelper uiHelper;
 
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -40,27 +46,39 @@ public class FacebookReceiver {
             FacebookProfileProvider.GenerateFacebookProvider(mActivity, session, new ProfileCallback() {
                 @Override
                 public void onReady(ProfileProvider instance) {
-                    mAuthCallbacks.onLogin(instance);
+                    onLogin(instance);
                 }
 
                 @Override
                 public void fail(String s) {
-                    mAuthCallbacks.onLogout();
+                    onLogout();
                 }
             });
         } else if (sessionState.isClosed()) {
             Log.i(TAG, "Logged out...");
-            mAuthCallbacks.onLogout();
+            onLogout();
         }
     }
+
+    private void onLogin(ProfileProvider instance) {
+        for (AuthenticationCallbacks callbacks : mAuthCallbacks) {
+            callbacks.onLogin(instance);
+        }
+    }
+    
+    private void onLogout() {
+        for (AuthenticationCallbacks callbacks : mAuthCallbacks) {
+            callbacks.onLogout();
+        }
+    }
+    
 
 
     /* Below this line is fairly boiler plate stuff */
 
-    public FacebookReceiver(Activity activity, AuthenticationCallbacks authenticated) {
+    public FacebookReceiver(Activity activity) {
         uiHelper = new UiLifecycleHelper(activity, callback);
         mActivity = activity;
-        mAuthCallbacks = authenticated;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -98,5 +116,10 @@ public class FacebookReceiver {
 
     public void onStop() {
         uiHelper.onStop();
+    }
+
+    public void registerAuthenticatedCallback(AuthenticationCallbacks authenticationProvider) {
+        // If it's not been added then add it
+        mAuthCallbacks.add(authenticationProvider);
     }
 }
