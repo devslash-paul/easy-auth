@@ -1,13 +1,18 @@
 
 package net.devslash.easyauth.providers;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.Serializable;
 
@@ -19,15 +24,17 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
     private String fullName;
     private String email;
     private String firstName;
+    private Bitmap profilePicture;
 
 
-    public static void GenerateGoogleProfile(GoogleApiClient app, ProfileCallback profileCallback) {
+    public static void GenerateGoogleProfile(Context ctx, GoogleApiClient app, final ProfileCallback profileCallback) {
 
-        GoogleProfileProvider provider = new GoogleProfileProvider();
+        final GoogleProfileProvider provider = new GoogleProfileProvider();
 
 
         Person profile = Plus.PeopleApi.getCurrentPerson(app);
         String email = Plus.AccountApi.getAccountName(app);
+
 
         if (profile == null) {
             Log.e(TAG, "Unable to fetch the profile");
@@ -38,7 +45,26 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
         provider.setEmail(email);
         provider.setFirstName(profile.getName().getGivenName());
 
-        profileCallback.onReady(provider);
+        String profileImageURL = profile.getImage().getUrl();
+        Picasso.with(ctx).load(profileImageURL).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                provider.setProfilePicture(bitmap);
+                profileCallback.onReady(provider);
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                profileCallback.onReady(provider);
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        });
+
+
     }
 
     @Override
@@ -79,4 +105,7 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
         this.firstName = firstName;
     }
 
+    public void setProfilePicture(Bitmap profilePicture) {
+        this.profilePicture = profilePicture;
+    }
 }
