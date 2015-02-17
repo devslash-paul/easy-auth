@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.facebook.widget.LoginButton;
 import com.google.android.gms.common.SignInButton;
@@ -69,7 +71,8 @@ public class MainActivity extends Activity implements AuthenticationCallbacks{
 
         // Initialise the G+ API
         // This will let me grab all the info.. But how do i deal with this on application start?
-        authenticationProvider = new AuthenticationProvider(this, this);
+        authenticationProvider = new AuthenticationProvider(this);
+        authenticationProvider.registerForAuthenticationCallbacks(this, false);
         authenticationProvider.onCreate(savedInstanceState);
     }
 
@@ -111,11 +114,17 @@ public class MainActivity extends Activity implements AuthenticationCallbacks{
 
     @Override
     public void onLogin(ProfileProvider provider) {
-
+        ((TextView) findViewById(R.id.tv_email_val)).setText(provider.getEmail());
+        ((TextView) findViewById(R.id.tv_profile_name_val)).setText(provider.getName());
+        ((TextView) findViewById(R.id.tv_identifier_val)).setText(provider.getAccessToken());
+        ((ImageView) findViewById(R.id.iv_profile_picture)).setImageBitmap(provider.getProfilePicture());
     }
 
     @Override
     public void onLogout() {
-
+        ((TextView) findViewById(R.id.tv_email_val)).setText("");
+        ((TextView) findViewById(R.id.tv_profile_name_val)).setText("");
+        ((TextView) findViewById(R.id.tv_identifier_val)).setText("");
+        ((ImageView) findViewById(R.id.iv_profile_picture)).setImageBitmap(null);
     }
 }

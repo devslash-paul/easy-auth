@@ -168,12 +168,17 @@ public class FacebookProfileProvider implements ProfileProvider, Serializable {
 
     @Override
     public String getEmail() {
-        return "FB: " + email;
+        return email;
     }
 
     @Override
     public Bitmap getProfilePicture() {
         return profilePicture;
+    }
+
+    @Override
+    public String getAccessToken() {
+        return mySession.getAccessToken();
     }
 
     public void setEmail(String email) {

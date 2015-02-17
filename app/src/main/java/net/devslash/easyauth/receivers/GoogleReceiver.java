@@ -53,7 +53,7 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
             googleProgressDialog.dismiss();
         }
 
-        GoogleProfileProvider.GenerateGoogleProfile(googleApiClient, new ProfileCallback() {
+        GoogleProfileProvider.GenerateGoogleProfile(mActivity, googleApiClient, new ProfileCallback() {
             @Override
             public void onReady(ProfileProvider instance) {
                 onLogin(instance);
@@ -110,7 +110,7 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
     }
 
     private void resolveSignInError(ConnectionResult result) {
-        if (result.hasResolution()) {
+        if (result != null && result.hasResolution()) {
             try {
                 gIntentInProgress = true;
                 result.startResolutionForResult(mActivity, 0);
