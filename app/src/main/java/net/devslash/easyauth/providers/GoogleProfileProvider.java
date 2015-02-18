@@ -34,45 +34,43 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
     public static void GenerateGoogleProfile(final Context ctx, GoogleApiClient app, final ProfileCallback profileCallback) {
 
         final GoogleProfileProvider provider = new GoogleProfileProvider();
+        Person profile = Plus.PeopleApi.getCurrentPerson(app);
+        final String email = Plus.AccountApi.getAccountName(app);
 
         final String googleWebClientServer;
         try {
             googleWebClientServer = (String) ctx.getPackageManager().getApplicationInfo(ctx.getPackageName(), PackageManager.GET_META_DATA)
                     .metaData.get("net.devslash.googleClientID");
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        authToken =
+                                GoogleAuthUtil.getToken(
+                                        ctx,
+                                        email,
+                                        googleWebClientServer);
+                    } catch (UserRecoverableAuthException e) {
+                        ctx.startActivity(e.getIntent());
+                        e.printStackTrace();
+                    } catch (GoogleAuthException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         } catch (PackageManager.NameNotFoundException e) {
-            throw new RuntimeException(e);
+            // This just means we won't be able to get the googleAUth
         }
 
 
-        Person profile = Plus.PeopleApi.getCurrentPerson(app);
-        final String email = Plus.AccountApi.getAccountName(app);
+       
 
         if (profile == null) {
             Log.e(TAG, "Unable to fetch the profile");
             return; //TODO: Maybe shouldn't fail like this?
         }
-
-        final int[] t = {0};
-
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    authToken =
-                            GoogleAuthUtil.getToken(
-                                    ctx,
-                                    email,
-                                    googleWebClientServer);
-                } catch (UserRecoverableAuthException e) {
-                    ctx.startActivity(e.getIntent());
-                    e.printStackTrace();
-                } catch (GoogleAuthException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
 
         provider.setFullName(profile.getDisplayName());
         provider.setEmail(email);
