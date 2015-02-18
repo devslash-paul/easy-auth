@@ -30,6 +30,7 @@ public class FacebookProfileProvider implements ProfileProvider, Serializable {
     private String firstName;
     private String email;
     private Bitmap profilePicture;
+    private ProfileType profileType = ProfileType.FACEBOOK;
 
     /**
      * This is currently bad. Because when creating it you're also giving away the instance of it as
@@ -160,11 +161,6 @@ public class FacebookProfileProvider implements ProfileProvider, Serializable {
         return true;
     }
 
-    @Override
-    public boolean signOut() {
-        mySession.close();
-        return false;
-    }
 
     @Override
     public String getEmail() {
@@ -187,5 +183,10 @@ public class FacebookProfileProvider implements ProfileProvider, Serializable {
 
     public void setPicture(Bitmap picture) {
         this.profilePicture = picture;
+    }
+
+    @Override
+    public ProfileType getProfileType() {
+        return profileType;
     }
 }

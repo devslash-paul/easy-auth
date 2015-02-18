@@ -1,17 +1,21 @@
 package net.devslash.easyauth.providers;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import net.devslash.easyauth.R;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -26,11 +30,20 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
     private String email;
     private String firstName;
     private Bitmap profilePicture;
+    private ProfileType profileType = ProfileType.GOOGLE;
 
 
     public static void GenerateGoogleProfile(final Context ctx, GoogleApiClient app, final ProfileCallback profileCallback) {
 
         final GoogleProfileProvider provider = new GoogleProfileProvider();
+
+        final String googleWebClientServer;
+        try {
+            googleWebClientServer = (String) ctx.getPackageManager().getApplicationInfo(ctx.getPackageName(), PackageManager.GET_META_DATA)
+                    .metaData.get("net.devslash.googleClientID");
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
 
         Person profile = Plus.PeopleApi.getCurrentPerson(app);
@@ -50,8 +63,13 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
                         GoogleAuthUtil.getToken(
                             ctx,
                             email,
-                            "oauth2:server:client_id:478536351589-49e8btdvr8366pjlcp0d7pfv89mourfr.apps.googleusercontent.com");
-                } catch (IOException | GoogleAuthException e) {
+                            googleWebClientServer);
+                } catch (UserRecoverableAuthException e) {
+                    ctx.startActivity(e.getIntent());
+                    e.printStackTrace();
+                } catch (GoogleAuthException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -95,12 +113,6 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
     }
 
     @Override
-    public boolean signOut() {
-
-        return false;
-    }
-
-    @Override
     public String getEmail() {
         return "G+: " + email;
     }
@@ -129,5 +141,9 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
 
     public void setProfilePicture(Bitmap profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public ProfileType getProfileType() {
+        return profileType;
     }
 }

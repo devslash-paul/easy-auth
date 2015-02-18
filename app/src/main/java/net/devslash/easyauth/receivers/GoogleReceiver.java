@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -38,8 +39,11 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
     private ProgressDialog googleProgressDialog;
     private Set<AuthenticationCallbacks> mAuthCallbacks = new HashSet<>();
 
+
+    
     public GoogleReceiver(Activity activity) {
         mActivity = activity;
+
     }
 
 
@@ -61,7 +65,6 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
 
             @Override
             public void fail(String s) {
-
             }
         });
 
@@ -157,5 +160,17 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
 
     public void registerAuthenticationCallback(AuthenticationCallbacks authenticationCallbacks) {
         mAuthCallbacks.add(authenticationCallbacks);
+    }
+
+    public void doLogout(boolean invalidateTokens) {
+        if (googleApiClient.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(googleApiClient);
+
+            if (invalidateTokens) {
+                Plus.AccountApi.revokeAccessAndDisconnect(googleApiClient);
+            }
+            googleApiClient.disconnect();
+            onLogout();
+        }
     }
 }

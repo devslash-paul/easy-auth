@@ -13,12 +13,12 @@ public interface ProfileProvider extends Serializable {
 
     public boolean isLoggedIn();
 
-    public boolean signOut();
-
     public String getEmail();
 
     public Bitmap getProfilePicture();
 
     public String getAccessToken();
+    
+    public ProfileType getProfileType();
 
 }
