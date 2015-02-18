@@ -4,5 +4,5 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="app_id">1389368491375203</string>
-    <string name="google_auth">audience:server:client_id:478536351589-49e8btdvr8366pjlcp0d7pfv89mourfr.apps.googleusercontent.com</string>
+    <string name="google_auth">audience:server:client_id:1000652735949-2g1jtvft6acd34puubar661kjjjo2avs.apps.googleusercontent.com</string>
 </resources>

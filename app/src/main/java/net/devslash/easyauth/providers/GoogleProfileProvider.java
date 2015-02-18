@@ -114,7 +114,7 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
 
     @Override
     public String getEmail() {
-        return "G+: " + email;
+        return email;
     }
 
     @Override
