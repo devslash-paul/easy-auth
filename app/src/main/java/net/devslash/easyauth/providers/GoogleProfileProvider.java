@@ -7,11 +7,14 @@ import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import net.devslash.easyauth.R;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -50,8 +53,13 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
                         GoogleAuthUtil.getToken(
                             ctx,
                             email,
-                            "oauth2:server:client_id:478536351589-49e8btdvr8366pjlcp0d7pfv89mourfr.apps.googleusercontent.com");
-                } catch (IOException | GoogleAuthException e) {
+                            ctx.getString(R.string.server_token_google));
+                } catch (UserRecoverableAuthException e) {
+                    ctx.startActivity(e.getIntent());
+                    e.printStackTrace();
+                } catch (GoogleAuthException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

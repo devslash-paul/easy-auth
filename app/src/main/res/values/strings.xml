@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EasyAuth</string>
+    <string name="server_token_google">audience:server:client_id:478536351589-49e8btdvr8366pjlcp0d7pfv89mourfr.apps.googleusercontent.com</string>
 </resources>
