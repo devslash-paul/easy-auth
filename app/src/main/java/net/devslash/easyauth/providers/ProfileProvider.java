@@ -18,7 +18,7 @@ public interface ProfileProvider extends Serializable {
     public Bitmap getProfilePicture();
 
     public String getAccessToken();
-    
+
     public ProfileType getProfileType();
 
 }

@@ -6,8 +6,8 @@ package net.devslash.easyauth.providers;
 public enum ProfileType {
     GOOGLE("Google+"),
     FACEBOOK("Facebook");
-    
-    
+
+
     private final String name;
 
     ProfileType(String name) {

@@ -167,6 +167,10 @@ public class FacebookProfileProvider implements ProfileProvider, Serializable {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public Bitmap getProfilePicture() {
         return profilePicture;
@@ -175,10 +179,6 @@ public class FacebookProfileProvider implements ProfileProvider, Serializable {
     @Override
     public String getAccessToken() {
         return mySession.getAccessToken();
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public void setPicture(Bitmap picture) {

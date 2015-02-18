@@ -1,4 +1,4 @@
-package net.devslash.easyauth.receivers;
+package net.devslash.easyauth.authflows;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,12 +21,12 @@ import java.util.Set;
 /**
  * Created by Paul on 12/02/2015.
  */
-public class FacebookReceiver {
+public class FacebookAuthenticator {
 
     private final String TAG = "FacebookReceiver";
     private final Activity mActivity;
     private final Set<AuthenticationCallbacks> mAuthCallbacks = new HashSet<>();
-    
+
     private UiLifecycleHelper uiHelper;
 
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -35,6 +35,11 @@ public class FacebookReceiver {
             onSessionStateChange(session, sessionState, e);
         }
     };
+
+    public FacebookAuthenticator(Activity activity) {
+        uiHelper = new UiLifecycleHelper(activity, callback);
+        mActivity = activity;
+    }
 
     private void onSessionStateChange(final Session session, SessionState sessionState, Exception exception) {
         Log.i(TAG, "Logged about to come up");
@@ -64,19 +69,14 @@ public class FacebookReceiver {
         }
     }
     
-    private void onLogout() {
-        for (AuthenticationCallbacks callbacks : mAuthCallbacks) {
-            callbacks.onLogout();
-        }
-    }
-    
 
 
     /* Below this line is fairly boiler plate stuff */
 
-    public FacebookReceiver(Activity activity) {
-        uiHelper = new UiLifecycleHelper(activity, callback);
-        mActivity = activity;
+    private void onLogout() {
+        for (AuthenticationCallbacks callbacks : mAuthCallbacks) {
+            callbacks.onLogout();
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -125,13 +125,13 @@ public class FacebookReceiver {
         Session session = Session.getActiveSession();
         if (session.isOpened()) {
             if (invalidateTokens) {
-                
+
                 session.closeAndClearTokenInformation();
             } else {
                 session.close();
             }
             onLogout();
         }
-        
+
     }
 }

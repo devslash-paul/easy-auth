@@ -15,8 +15,6 @@ import com.google.android.gms.plus.model.people.Person;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import net.devslash.easyauth.R;
-
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -60,10 +58,10 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
             public void run() {
                 try {
                     authToken =
-                        GoogleAuthUtil.getToken(
-                            ctx,
-                            email,
-                            googleWebClientServer);
+                            GoogleAuthUtil.getToken(
+                                    ctx,
+                                    email,
+                                    googleWebClientServer);
                 } catch (UserRecoverableAuthException e) {
                     ctx.startActivity(e.getIntent());
                     e.printStackTrace();
@@ -117,18 +115,22 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
         return email;
     }
 
+    private void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public Bitmap getProfilePicture() {
         return profilePicture;
     }
 
+    public void setProfilePicture(Bitmap profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
     @Override
     public String getAccessToken() {
         return authToken;
-    }
-
-    private void setEmail(String email) {
-        this.email = email;
     }
 
     private void setFullName(String fullName) {
@@ -137,10 +139,6 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
 
     private void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-    public void setProfilePicture(Bitmap profilePicture) {
-        this.profilePicture = profilePicture;
     }
 
     public ProfileType getProfileType() {

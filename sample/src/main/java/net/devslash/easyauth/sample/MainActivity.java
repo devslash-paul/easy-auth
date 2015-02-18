@@ -15,7 +15,7 @@ import com.google.android.gms.common.SignInButton;
 
 import net.devslash.easyauth.AuthenticationCallbacks;
 import net.devslash.easyauth.providers.ProfileProvider;
-import net.devslash.easyauth.receivers.AuthenticationProvider;
+import net.devslash.easyauth.AuthenticationProvider;
 
 import java.util.Arrays;
 

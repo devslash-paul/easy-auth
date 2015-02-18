@@ -1,10 +1,11 @@
-package net.devslash.easyauth.receivers;
+package net.devslash.easyauth;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import net.devslash.easyauth.AuthenticationCallbacks;
+import net.devslash.easyauth.authflows.FacebookAuthenticator;
+import net.devslash.easyauth.authflows.GoogleAuthenticator;
 import net.devslash.easyauth.providers.ProfileProvider;
 
 import java.util.HashSet;
@@ -13,13 +14,6 @@ import java.util.Set;
 
 /**
  * Created by Paul on 12/02/2015.
- * <p/>
- * LoginButton loginButton = (LoginButton) view.findViewById(R.id.authButton);
- * loginButton.setReadPermissions(Arrays.asList("email"));
- * SignInButton gSignIn = (SignInButton) view.findViewById(R.id.sign_in_button);
- * gSignIn.setOnClickListener((View.OnClickListener) getActivity());
- * <p/>
- * * <p/>
  * This class will perform all required authentication.
  * <p/>
  * This will then allow the base activity to not worry and grab the authenticated details whenver
@@ -41,17 +35,17 @@ import java.util.Set;
  * - onStop
  * - onDestroy
  */
-public class AuthenticationProvider implements AuthenticationCallbacks{
+public class AuthenticationProvider implements AuthenticationCallbacks {
 
-    FacebookReceiver fReceiver;
-    GoogleReceiver gReceiver;
+    FacebookAuthenticator fReceiver;
+    GoogleAuthenticator gReceiver;
     private Set<AuthenticationCallbacks> authCallbacksList = new HashSet<>();
     private ProfileProvider mCurrentProfile = null;
 
     public AuthenticationProvider(Activity activity) {
-        fReceiver = new FacebookReceiver(activity);
+        fReceiver = new FacebookAuthenticator(activity);
         fReceiver.registerAuthenticatedCallback(this);
-        gReceiver = new GoogleReceiver(activity);
+        gReceiver = new GoogleAuthenticator(activity);
         gReceiver.registerAuthenticationCallback(this);
     }
 
@@ -94,11 +88,18 @@ public class AuthenticationProvider implements AuthenticationCallbacks{
             gReceiver.doConnect();
         }
     }
-    
+
     public void doLogout(boolean invalidateTokens) {
         fReceiver.doLogout(invalidateTokens);
         gReceiver.doLogout(invalidateTokens);
-        
+    }
+
+    /**
+     * The default case means that the tokens will not
+     * be invalidated at all.
+     */
+    public void doLogout() {
+        doLogout(false);
     }
 
     public void registerForAuthenticationCallbacks(AuthenticationCallbacks callback,
@@ -127,6 +128,10 @@ public class AuthenticationProvider implements AuthenticationCallbacks{
         for (AuthenticationCallbacks callbacks : authCallbacksList) {
             callbacks.onLogout();
         }
+    }
+
+    public ProfileProvider getCurrentProfile() {
+        return mCurrentProfile;
     }
 
     public static enum AvailableLogin {

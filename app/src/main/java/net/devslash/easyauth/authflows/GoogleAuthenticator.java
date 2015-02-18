@@ -1,10 +1,9 @@
-package net.devslash.easyauth.receivers;
+package net.devslash.easyauth.authflows;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -23,13 +22,13 @@ import java.util.Set;
 /**
  * Created by Paul on 12/02/2015.
  */
-public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
+public class GoogleAuthenticator implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private final String TAG = "GoogleReceiver";
     private final Activity mActivity;
     private final Set<AuthenticationCallbacks> mCallback = new HashSet<>();
-    
+
     private ConnectionResult gConnectionResult;
     private GoogleApiClient googleApiClient;
 
@@ -40,8 +39,7 @@ public class GoogleReceiver implements GoogleApiClient.ConnectionCallbacks,
     private Set<AuthenticationCallbacks> mAuthCallbacks = new HashSet<>();
 
 
-    
-    public GoogleReceiver(Activity activity) {
+    public GoogleAuthenticator(Activity activity) {
         mActivity = activity;
 
     }
