@@ -79,5 +79,11 @@
             android:layout_toEndOf="@id/tv_identifier"
             android:layout_toRightOf="@id/tv_identifier"/>
     </RelativeLayout>
+    
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log Out of ALL"/>
 
 </LinearLayout>

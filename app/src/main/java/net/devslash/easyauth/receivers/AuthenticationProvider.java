@@ -7,9 +7,7 @@ import android.os.Bundle;
 import net.devslash.easyauth.AuthenticationCallbacks;
 import net.devslash.easyauth.providers.ProfileProvider;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -95,6 +93,12 @@ public class AuthenticationProvider implements AuthenticationCallbacks{
         } else if (loginType == AvailableLogin.GOOGLE) {
             gReceiver.doConnect();
         }
+    }
+    
+    public void doLogout(boolean invalidateTokens) {
+        fReceiver.doLogout(invalidateTokens);
+        gReceiver.doLogout(invalidateTokens);
+        
     }
 
     public void registerForAuthenticationCallbacks(AuthenticationCallbacks callback,

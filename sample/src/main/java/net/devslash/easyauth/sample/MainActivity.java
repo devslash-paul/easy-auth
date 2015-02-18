@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -69,6 +70,14 @@ public class MainActivity extends Activity implements AuthenticationCallbacks{
             }
         });
 
+        Button logout = (Button) findViewById(R.id.logout_button);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                authenticationProvider.doLogout(true);
+            }
+        });
+
         // Initialise the G+ API
         // This will let me grab all the info.. But how do i deal with this on application start?
         authenticationProvider = new AuthenticationProvider(this);
@@ -114,6 +123,7 @@ public class MainActivity extends Activity implements AuthenticationCallbacks{
 
     @Override
     public void onLogin(ProfileProvider provider) {
+        // We have to handle the Google case
         ((TextView) findViewById(R.id.tv_email_val)).setText(provider.getEmail());
         ((TextView) findViewById(R.id.tv_profile_name_val)).setText(provider.getName());
         ((TextView) findViewById(R.id.tv_identifier_val)).setText(provider.getAccessToken());

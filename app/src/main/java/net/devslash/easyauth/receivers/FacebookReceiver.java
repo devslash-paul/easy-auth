@@ -15,9 +15,7 @@ import net.devslash.easyauth.providers.FacebookProfileProvider;
 import net.devslash.easyauth.providers.ProfileCallback;
 import net.devslash.easyauth.providers.ProfileProvider;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -121,5 +119,19 @@ public class FacebookReceiver {
     public void registerAuthenticatedCallback(AuthenticationCallbacks authenticationProvider) {
         // If it's not been added then add it
         mAuthCallbacks.add(authenticationProvider);
+    }
+
+    public void doLogout(boolean invalidateTokens) {
+        Session session = Session.getActiveSession();
+        if (session.isOpened()) {
+            if (invalidateTokens) {
+                
+                session.closeAndClearTokenInformation();
+            } else {
+                session.close();
+            }
+            onLogout();
+        }
+        
     }
 }

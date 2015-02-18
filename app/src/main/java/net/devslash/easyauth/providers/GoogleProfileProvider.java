@@ -1,6 +1,7 @@
 package net.devslash.easyauth.providers;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -29,11 +30,20 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
     private String email;
     private String firstName;
     private Bitmap profilePicture;
+    private ProfileType profileType = ProfileType.GOOGLE;
 
 
     public static void GenerateGoogleProfile(final Context ctx, GoogleApiClient app, final ProfileCallback profileCallback) {
 
         final GoogleProfileProvider provider = new GoogleProfileProvider();
+
+        final String googleWebClientServer;
+        try {
+            googleWebClientServer = (String) ctx.getPackageManager().getApplicationInfo(ctx.getPackageName(), PackageManager.GET_META_DATA)
+                    .metaData.get("net.devslash.googleClientID");
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
 
         Person profile = Plus.PeopleApi.getCurrentPerson(app);
@@ -53,7 +63,7 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
                         GoogleAuthUtil.getToken(
                             ctx,
                             email,
-                            ctx.getString(R.string.server_token_google));
+                            googleWebClientServer);
                 } catch (UserRecoverableAuthException e) {
                     ctx.startActivity(e.getIntent());
                     e.printStackTrace();
@@ -103,12 +113,6 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
     }
 
     @Override
-    public boolean signOut() {
-
-        return false;
-    }
-
-    @Override
     public String getEmail() {
         return "G+: " + email;
     }
@@ -137,5 +141,9 @@ public class GoogleProfileProvider implements ProfileProvider, Serializable {
 
     public void setProfilePicture(Bitmap profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public ProfileType getProfileType() {
+        return profileType;
     }
 }
